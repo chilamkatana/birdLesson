@@ -27,11 +27,15 @@ public class Game : MonoBehaviour {
     public GameObject GameOver;
 
     public PipelineManger pipelineManger;
+    public uniManager uniManager;
+
     public player player;
 
     public int score;
     public Text uiScore;
     public Text uiScore2;
+
+    public Slider hpbar;
 
     public int Score
     {
@@ -53,19 +57,22 @@ public class Game : MonoBehaviour {
     {
         this.Status = GAME_STATUS.GameOver;
         this.pipelineManger.Stop();
+        this.uniManager.Stop();
     }
 
     // Update is called once per frame
     void Update () {
-		
+		this.hpbar.value = Mathf.Lerp(this.hpbar.value,this.player.HP,Time.deltaTime);
 	}
 
     public void StartGame()
     {
         this.Status = GAME_STATUS.InGame;
         pipelineManger.StartRun();
+        uniManager.Begin();
         player.Fly();
         this.player.onScore = onPlayerScore;
+        this.hpbar.value = this.player.HP;
     }
 
     void onPlayerScore(int score)
@@ -83,6 +90,7 @@ public class Game : MonoBehaviour {
 
     public void reStart()
     {
+        
         this.Status = GAME_STATUS.Ready;
         this.pipelineManger.Init();
         this.player.init();

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class player : MonoBehaviour {
+public class player : MonoBehaviour
+{
 
     public Rigidbody2D rigibodyBird;
 
     public float speed = 5f;
+    public float fireRate = 5;
 
     public Animator ani;
 
@@ -19,10 +21,15 @@ public class player : MonoBehaviour {
 
     public UnityAction<int> onScore;
 
+    public GameObject bulletTemlate;
+
     private Vector3 initPos;
 
-	// Use this for initialization
-	void Start () {
+    public float HP = 10;
+
+    // Use this for initialization
+    void Start()
+    {
         this.Idle();
         initPos = this.transform.position;
     }
@@ -33,27 +40,48 @@ public class player : MonoBehaviour {
         this.Idle();
         this.death = false;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    float fireTimer = 0;
+    // Update is called once per frame
+    void Update()
+    {
         if (this.death)
         {
             return;
         }
 
+
+        fireTimer += Time.deltaTime;
         Vector2 pos = this.transform.position;
 
         pos.x += Input.GetAxis("Horizontal") * Time.deltaTime * speed;
         pos.y += Input.GetAxis("Vertical") * Time.deltaTime * speed;
 
         this.transform.position = pos;
-       
-	}
+
+        if (Input.GetButton("Fire1"))
+        {
+            this.Fire();
+        }
+    }
+
+    public void Fire()
+    {
+        if (fireTimer > 1 / fireRate)
+        {
+            GameObject go = Instantiate(bulletTemlate);
+            go.transform.position = this.transform.position;
+
+            fireTimer = 0f;
+        }
+
+
+    }
 
     public void Death()
     {
         this.death = true;
-        if(this.onDeath != null)
+        if (this.onDeath != null)
         {
             this.onDeath();
         }
@@ -74,29 +102,37 @@ public class player : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+
         if (collision.gameObject.name.Equals("scoreArea"))
         {
 
         }
-        else
-            this.Death();
+        // else
+        //this.Death();
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name.Equals("scoreArea"))
+        Element bullet = collision.gameObject.GetComponent<Element>();
+        if (bullet == null)
         {
-            if(this.onScore != null)
+            return;
+        }
+        Debug.Log("player:onTrigger");
+        if (bullet.side == SIDE.ENEMY)
+        {
+            this.HP = this.HP - bullet.power;
+            if (this.HP <= 0)
             {
-                this.onScore(1);
+                this.Death();
             }
+
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
-        this.Death();
+
+        //this.Death();
     }
 }
