@@ -90,7 +90,6 @@ public class Game : MonoBehaviour {
 
     public void reStart()
     {
-        
         this.Status = GAME_STATUS.Ready;
         this.pipelineManger.Init();
         this.player.init();

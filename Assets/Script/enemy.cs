@@ -3,81 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class enemy : MonoBehaviour
+public class enemy : Unit
 {
 
-    public Rigidbody2D rigibodyBird;
-
-    public float speed = 5f;
-    public float fireRate = 5;
-
-    public Animator ani;
-
-    public bool death = false;
-
-    public delegate void deathNotify();
-
     public event deathNotify onDeath;
-
-    public UnityAction<int> onScore;
-
-    public GameObject bulletTemlate;
-
-    private Vector3 initPos;
 
     public float lifeTime = 4f;
 
     public ENEMY_TYPE enemyType;
 
+    public float min;
+    public float max;
+    public float initY = 0;
     // Use this for initialization
-    void Start()
+    public override void OnStart()
     {
         this.Fly();
-        initPos = this.transform.position;
         Destroy(this.gameObject, lifeTime);
+
+        initY = Random.Range(min, max);
+        this.transform.localPosition = new Vector3(0, initY, 0);
     }
 
-    public void init()
-    {
-        this.transform.position = initPos;
-        this.Fly();
-        this.death = false;
-    }
 
-    float fireTimer = 0;
+
+    
     // Update is called once per frame
-    void Update()
+    public override void OnUpdate()
     {
-        if (this.death)
-        {
-            return;
-        }
 
-
-        fireTimer += Time.deltaTime;
         
         float y = 0;
         if(this.enemyType == ENEMY_TYPE.SWING_ENEMY){
              y = Mathf.Sin(Time.timeSinceLevelLoad)*3f;
         }
-        this.transform.position = new Vector3(this.transform.position.x-Time.deltaTime * speed, y);
+        this.transform.position = new Vector3(this.transform.position.x-Time.deltaTime * speed, initY+y);
 
-        this.Fire();
-
-    }
-
-    public void Fire()
-    {
-        if (fireTimer > 1 / fireRate)
-        {
-            GameObject go = Instantiate(bulletTemlate);
-            go.transform.position = this.transform.position;
-            go.GetComponent<Element>().direction = -1;
-            fireTimer = 0f;
-        }
-
+        this.Fire(-1);
 
     }
+
+
 
     public void Death()
     {
@@ -90,18 +56,6 @@ public class enemy : MonoBehaviour
         Destroy(this.gameObject,0.2f);
     }
 
-    public void Idle()
-    {
-        this.rigibodyBird.simulated = false;
-        this.ani.SetTrigger("idle");
-        this.death = false;
-    }
-
-    public void Fly()
-    {
-        this.rigibodyBird.simulated = true;
-        this.ani.SetTrigger("fly");
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

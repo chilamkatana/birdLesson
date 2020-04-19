@@ -13,8 +13,7 @@ public class uniManager : MonoBehaviour
     public float speed3 = 5;
     public List<enemy> enemies = new List<enemy>();
 
-    public float min;
-    public float max;
+
 
     // Use this for initialization
     void Start()
@@ -86,8 +85,7 @@ public class uniManager : MonoBehaviour
         enemy p = obj.GetComponent<enemy>();
         this.enemies.Add(p);
 
-        float y = Random.Range(min, max);
-        obj.transform.localPosition = new Vector3(0, y, 0);
+        
 
 
     }

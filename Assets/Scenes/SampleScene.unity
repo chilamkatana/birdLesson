@@ -1547,13 +1547,12 @@ MonoBehaviour:
     type: 2}
   enemyTemplate2: {fileID: 1181339167016212, guid: 887ed1455609ca6488bea9ee72728fb8,
     type: 2}
-  enemyTemplate3: {fileID: 0}
+  enemyTemplate3: {fileID: 1181339167016212, guid: 3029a9e5db6ca5445bc77b76804f433c,
+    type: 2}
   speed1: 2
   speed2: 3
   speed3: 5
   enemies: []
-  min: 0
-  max: 8
 --- !u!1 &1441288564
 GameObject:
   m_ObjectHideFlags: 0
